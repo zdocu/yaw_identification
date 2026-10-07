@@ -5,7 +5,6 @@ B = 0.534220
 c = 0.015445
 dt = 0.005
 
-# 学长的参数
 ref_kp_vel = 13.0
 ref_ki_vel = 0.02
 ref_kp_angle = 10.0
@@ -56,7 +55,7 @@ def evaluate_pid(kp_vel, ki_vel, kp_angle, target=0.523):
         if angle > overshoot:
             overshoot = angle
     
-    # 评分：上升时间 + 超调 + 离学长参数的距离
+    # 评分：上升时间 + 超调 + PID误差
     score = rise_time + (overshoot - target) * 50
     score += abs(kp_vel - ref_kp_vel) * 100
     score += abs(ki_vel - ref_ki_vel) * 10000
