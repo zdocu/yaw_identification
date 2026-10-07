@@ -88,15 +88,15 @@ public:
             *output_.yaw_control_torque =
                 yaw_velocity_pid_.update(yaw_velocity_ref - *input_.yaw_velocity_imu)
                 + trajectory_ff.yaw_velocity + trajectory_ff.yaw_acceleration;
-                // 阶跃模式：左边拨杆MIDDLE + 右边拨杆UP时触发
-        // 闭环阶跃：左边拨杆MIDDLE + 右边拨杆UP时触发
-        if (switch_left == Switch::MIDDLE && switch_right == Switch::UP) {
-            static bool step_triggered = false;
-        if (!step_triggered) {
-        // 第一次触发时，把yaw_target_angle改成0.5弧度（30度）
-            *input_.yaw_target_angle = 0.5;
-            step_triggered = true;
-    }
+                
+                // 扫频模式：左边拨杆MIDDLE + 右边拨杆UP时触发
+                if (switch_left == Switch::MIDDLE && switch_right == Switch::UP) {
+                    double dt = update_dt();
+                    static double sweep_time = 0.0;
+                    sweep_time += dt;
+                    double frequency = 1.0 + sweep_time * 0.1;
+                    *output_.yaw_control_torque = 2.0 * sin(2 * M_PI * frequency * sweep_time);
+                }
 }
 
 
